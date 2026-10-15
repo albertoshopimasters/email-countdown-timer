@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Generador de temporizador</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px}
+label{display:block;margin:10px 0 4px;font-weight:600}input,select{padding:6px;width:100%;box-sizing:border-box}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}textarea{width:100%;height:90px;font-family:monospace}
+img{max-width:100%;margin:16px 0;border:1px solid #ddd}
+</style></head><body>
+<h1>Temporizador para email</h1>
+<label>Fecha y hora de fin (hora de España)</label><input id="end" type="datetime-local" value="2026-11-27T00:00">
+<div class="row">
+<div><label>Fondo</label><input id="bg" type="color" value="#000000"></div>
+<div><label>Números</label><input id="fg" type="color" value="#ffffff"></div>
+<div><label>Etiquetas</label><input id="label" type="color" value="#bbbbbb"></div>
+</div>
+<div class="row">
+<div><label>Ancho</label><input id="w" type="number" value="600"></div>
+<div><label>Alto</label><input id="h" type="number" value="120"></div>
+<div><label>Idioma</label><select id="lang"><option>es</option><option>en</option><option>pt</option><option>ca</option><option>fr</option></select></div>
+</div>
+<label>Texto al terminar (opcional)</label><input id="expired" placeholder="¡OFERTA TERMINADA!">
+<img id="preview" alt="preview">
+<label>HTML para Klaviyo (bloque HTML)</label><textarea id="out" readonly></textarea>
+<script>
+const $ = (id) => document.getElementById(id);
+function tz(d){ // offset de Europe/Madrid para esa fecha (gestiona CET/CEST)
+  const s = new Date(d).toLocaleString('en-US',{timeZone:'Europe/Madrid',timeZoneName:'longOffset'});
+  const m = s.match(/GMT([+-]\d{2}:\d{2})/); return m ? m[1] : '+01:00';
+}
+function build(){
+  const end = $('end').value + ':00' + tz($('end').value);
+  const p = new URLSearchParams({end, bg:$('bg').value.slice(1), fg:$('fg').value.slice(1),
+    label:$('label').value.slice(1), w:$('w').value, h:$('h').value, lang:$('lang').value});
+  if ($('expired').value) p.set('expired', $('expired').value);
+  const url = location.origin + '/timer.gif?' + p.toString();
+  $('preview').src = url + '&_=' + Date.now();
+  $('out').value = `<img src="${url}" width="${$('w').value}" height="${$('h').value}" alt="Cuenta atrás" style="display:block;margin:0 auto;max-width:100%;height:auto;border:0;">`;
+}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('change',build)); build();
+</script></body></html>

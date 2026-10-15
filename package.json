@@ -1,0 +1,20 @@
+{
+  "name": "email-countdown-timer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.10",
+    "express": "^5.2.1",
+    "gifenc": "^1.0.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
