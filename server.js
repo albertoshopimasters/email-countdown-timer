@@ -82,8 +82,12 @@ function buildGif(opts, secondsLeft) {
 }
 
 app.get('/timer.gif', (req, res) => {
+  const t0 = Date.now();
   const end = Date.parse(req.query.end);
-  if (isNaN(end)) return res.status(400).send('Parámetro "end" inválido (ISO 8601, ej. 2026-11-27T00:00:00+01:00)');
+  if (isNaN(end)) {
+    console.log(`GIF 400 end inválido: ${JSON.stringify(req.query.end)}`);
+    return res.status(400).send('Parámetro "end" inválido (ISO 8601, ej. 2026-11-27T00:00:00+01:00)');
+  }
 
   const opts = {
     width: Math.min(Math.max(parseInt(req.query.w) || 600, 200), 800),
@@ -98,6 +102,7 @@ app.get('/timer.gif', (req, res) => {
   const key = JSON.stringify(opts) + '|' + Math.max(secondsLeft, 0);
 
   let buf = cache.get(key);
+  const hit = !!buf;
   if (!buf) {
     buf = buildGif(opts, secondsLeft);
     cache.set(key, buf);
@@ -111,6 +116,10 @@ app.get('/timer.gif', (req, res) => {
     Expires: '0',
   });
   res.send(buf);
+
+  const [d, h, m] = splitTime(secondsLeft);
+  const restante = secondsLeft <= 0 ? 'EXPIRADO' : `${d}d${h}h${m}m`;
+  console.log(`GIF lang=${opts.lang} end=${req.query.end} restante=${restante} cache=${hit ? 'HIT' : 'MISS'} ${Date.now() - t0}ms`);
 });
 
 app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'builder.html')));
