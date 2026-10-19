@@ -14,7 +14,7 @@ const LABELS = {
   es: ['DÍAS', 'HORAS', 'MIN', 'SEG'],
   en: ['DAYS', 'HOURS', 'MINS', 'SECS'],
   pt: ['DIAS', 'HORAS', 'MIN', 'SEG'],
-  ca: ['DIES', 'HORES', 'MIN', 'SEG'],
+  de: ['TAGE', 'STUNDEN', 'MIN', 'SEK'],
   fr: ['JOURS', 'HEURES', 'MIN', 'SEC'],
 };
 
